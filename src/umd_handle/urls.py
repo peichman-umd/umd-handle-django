@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic.base import RedirectView
 from djangosaml2 import views as saml_views
 
 urlpatterns = [
+    # Redirect root to admin view
+    path('', RedirectView.as_view(url='/admin')),
     path("api/", include("umd_handle.api.urls")),
     path('admin/', admin.site.urls),
     path('saml2/', include('djangosaml2.urls')),
