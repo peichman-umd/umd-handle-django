@@ -82,6 +82,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'djangosaml2.middleware.SamlSessionMiddleware',
+    'umd_handle.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'umd_handle.urls'
@@ -123,6 +124,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = '/saml2/login/'
+LOGIN_URL_NAME = 'saml2_login' # A name for use in reverse() if needed
 # Default to the Django admin page after login
 LOGIN_REDIRECT_URL = '/admin'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
