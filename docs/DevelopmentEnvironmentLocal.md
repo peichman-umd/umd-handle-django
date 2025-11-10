@@ -48,7 +48,7 @@ environment on a local workstation.
     ```
 
 3) Download the `handle-test-sp.key` and `handle-test-sp.crt` files from the
-   "handle-test-saml" entry in LastPass into the project rooo directory.
+   "handle-test-saml" entry in LastPass into the project root directory.
 
     ℹ️ Note: These files can be placed in an directory outside the project,
     if desired. Also, when downloading the `handle-test-sp.crt`
@@ -67,7 +67,7 @@ environment on a local workstation.
     * SAML_KEY_FILE - relative (or absolute) file path to the
       `handle-test-sp.key` file
     * SAML_CERT_FILE - relative (or absolute) file path to the
-      ``handle-test-sp.crt` file
+      `handle-test-sp.crt` file
     * SECRET_KEY - Either comment out (a random key will be automatically
       generated), or populate with anything with sufficient randomness,
       i.e. `uuidgen | shasum -a 256 | cut -c-64`
@@ -80,20 +80,16 @@ environment on a local workstation.
     ./src/manage.py migrate
     ```
 
-6) Create an administrative user:
-
-   ```zsh
-   ./src/manage.py createsuperuser
-   ```
-
-7) Run the application. The default port is 3000; this is also the port that
+6) Run the application. The default port is 3000; this is also the port that
    is registered with DIT to allow SAML authentication to work from local:
 
     ```zsh
     ./src/manage.py runserver
     ```
 
-    The application will be running at <http://handle-local:3000/>
+    The application will be running at <http://handle-local:3000/>. To be able
+    to log in and access the administrative interface, you *must* be a member
+    of the "Handle-Administrator" group in Grouper.
 
     ----
 
@@ -110,9 +106,6 @@ environment on a local workstation.
     JWT tokens), will be available.
 
     ----
-
-    The administrative interface is accessible at
-    <http://handle-local:3000/admin>.
 
 ## Tests
 
