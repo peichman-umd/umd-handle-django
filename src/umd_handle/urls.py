@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 from djangosaml2 import views as saml_views
+from umd_handle.health_check import health_check;
 
 urlpatterns = [
     # Redirect root to admin view
@@ -25,6 +26,7 @@ urlpatterns = [
     path("api/", include("umd_handle.api.urls")),
     path('admin/', admin.site.urls),
     path('saml2/', include('djangosaml2.urls')),
+    path('health-check/', health_check, name='health-check'),
 
     # Following path is necessary because "users/auth/saml/callback" was the
     # path in the "AssertionConsumerService" tag provided in the service

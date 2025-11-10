@@ -11,6 +11,8 @@ class LoginRequiredMiddleware:
             '/users/auth/saml/callback',
             # Any call to an API endpoint is exempt (API endpoints use JWT)
             '/api',
+            # Health check endpoint accessible without authentication
+            '/health-check'
         )
     def __call__(self, request):
         # API calls to any endpoint in "/api" do not require CAS authentication
