@@ -1,6 +1,7 @@
 from django.db import models
+from django_extensions.db.models import TimeStampedModel
 
-class Handle(models.Model):
+class Handle(TimeStampedModel):
     prefix = models.CharField()
     suffix = models.IntegerField()
     url = models.CharField()
