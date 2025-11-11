@@ -103,4 +103,31 @@ GitHub for information about setting up a MacBook to use the Kubernetes
 
    The Docker image will be automatically pushed to the Nexus.
 
+## Django Management Tasks
+
+### JWT Tokens
+
+A list of JWT Tokens that have been issued by the system are stored in the
+"JWTToken" model.
+
+The "JWTToken" model is only designed to be a record of issued tokens, to
+help identify which servers need to be updated if the tokens need to be
+invalidated. The "JWTToken" model plays no role in validating tokens.
+
+#### Create a JWT token for authorizing access to the REST API
+
+```zsh
+python src/manage.py jwt_create_token "<DESCRIPTION>"
+```
+
+where \<DESCRIPTION> is a description of the server/service that will use the
+token.
+
+#### List JWT tokens
+
+```zsh
+python src/manage.py jwt_list_tokens
+```
+
+---
 [Django]: https://www.djangoproject.com/

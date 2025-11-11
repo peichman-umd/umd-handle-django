@@ -71,6 +71,8 @@ environment on a local workstation.
     * SECRET_KEY - Either comment out (a random key will be automatically
       generated), or populate with anything with sufficient randomness,
       i.e. `uuidgen | shasum -a 256 | cut -c-64`
+    * JWT_SECRET - populate with anything with sufficient randomness,
+      i.e. `uuidgen | shasum -a 256 | cut -c-64`
     * XMLSEC1_PATH - The full file path to the "xmlsec1" binary, (usually
       findable by running `which xmlsec1`)
 

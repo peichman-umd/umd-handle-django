@@ -18,6 +18,12 @@ SERVER_PORT=3000
 
 # SECRET_KEY=
 
+# Secret key used to generate JWT tokens
+# Any value can be used as long as it is "sufficiently long",
+# such as by running the following command in the console:
+# uuidgen | shasum -a256 | cut -d' ' -f1
+JWT_SECRET=
+
 # SAML_KEY_FILE and SAML_CERT_FILE may be absolute or relative paths; if they
 # are relative they are relative to the project root directory
 # These can be downloaded from the handle-test-saml note in the Shared-SSDR
