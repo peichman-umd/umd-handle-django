@@ -61,6 +61,10 @@ except OSError:
     # ignore if we can't get the IP address
     pass
 
+# Kubernetes internal host, used for inter-pod communication from the
+# Handle.net server instance, and other Kubernetes pods
+K8S_INTERNAL_HOST = URLObject(env.str('K8S_INTERNAL_HOST', 'umd-handle-app'))
+ALLOWED_HOSTS.append(K8S_INTERNAL_HOST)
 
 # Application definition
 
