@@ -175,3 +175,7 @@ cython_debug/
 **/*.cer
 **/*.crt
 **/*.key
+
+# staticfiles directory
+staticfiles/
+!staticfiles/.keep
