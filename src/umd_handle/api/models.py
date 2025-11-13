@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
@@ -28,7 +29,7 @@ class Handle(TimeStampedModel):
         validators=[validate_prefix]
     )
     suffix = models.IntegerField()
-    url = models.CharField()
+    url = models.CharField(validators=[URLValidator(schemes=['http', 'https'])])
     repo = models.CharField(
         choices=[(repo, repo) for repo in ALLOWED_REPOS],
         validators=[validate_repo]

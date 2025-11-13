@@ -43,3 +43,22 @@ def test_combined_prefix_and_suffix_must_be_unique(valid_handle):
 
     with pytest.raises(ValidationError):
         duplicate_handle.full_clean()
+
+@pytest.mark.django_db
+def test_url_must_be_valid_url(valid_handle):
+    invalid_urls = [
+      '',
+      ' ',
+      'abcd',
+      'jf3$jdlsg'
+      'http123',
+      'ftp://lib.umd.edu',
+    ]
+
+    handle = valid_handle
+    for invalid_url in invalid_urls:
+        handle.url = invalid_url
+
+        with pytest.raises(ValidationError):
+            handle.full_clean()
+
