@@ -13,6 +13,10 @@ BASE_URL=http://handle-local:3000/
 SERVER_PORT=3000
 K8S_INTERNAL_HOST=umd-handle-app
 
+# The base URL (including a trailing slash) for the handle proxy server
+# associated with this application. For example: "https://hdl-test.lib.umd.edu/"
+HANDLE_HTTP_PROXY_BASE=http://hdl-local.lib.umd.edu/
+
 # SECRET_KEY - Secret key used for provide cryptographic signing.
 #              Does not need to be set in local development, which will get
 #              a randomly generated secret key.

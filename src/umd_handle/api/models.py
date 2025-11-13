@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
@@ -77,6 +78,11 @@ class Handle(TimeStampedModel):
                 name='unique_handle_prefix_suffix'
             )
         ]
+
+      # Returns the fully-qualified URL to use as the handle URL
+    def handle_url(self):
+        return f"{settings.HANDLE_HTTP_PROXY_BASE}{self.prefix}/{self.suffix}"
+
 
 
 class JWTToken(TimeStampedModel):

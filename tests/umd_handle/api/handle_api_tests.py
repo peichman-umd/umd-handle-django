@@ -1,8 +1,10 @@
-import jwt
+import json
 import pytest
 from django.urls import reverse
 from umd_handle.api.models import Handle
 from umd_handle.api.tokens import create_jwt_token
+
+
 @pytest.fixture
 def override_jwt_secret_setting(settings):
     """
@@ -52,5 +54,75 @@ def test_handles_prefix_suffix_returns_404_for_unknown_handle(client, jwt_token)
     response = client.get(reverse("handles_prefix_suffix", kwargs={'prefix': prefix, 'suffix': suffix}),
                            headers=headers)
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_handles_mint_new_handle_success(settings, client, jwt_token):
+    url = reverse('handles_mint_new_handle')
+    headers = {'Authorization': f"Bearer {jwt_token}"}
+    body = {
+        'prefix': '1903.1',
+        'url': 'http://example.com/test',
+        'repo': 'fedora2',
+        'repo_id': 'test-123'
+    }
+    response = client.post(
+        url, data=json.dumps(body), content_type='application/json', headers=headers
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data['suffix'] == '1'
+    assert data['handle_url'] == f'{settings.HANDLE_HTTP_PROXY_BASE}1903.1/1'
+    assert data['request'] == {"prefix":"1903.1","repo":"fedora2","repo_id":"test-123","url":"http://example.com/test"}
+    # ensure handle exists in db
+    assert Handle.objects.filter(prefix='1903.1', repo_id='test-123').exists()
+
+
+@pytest.mark.django_db
+def test_handles_mint_new_handle_requires_jwt_token(client):
+    url = reverse('handles_mint_new_handle')
+    body = {
+        'prefix': '1903.1',
+        'url': 'http://example.com/test',
+        'repo': 'fedora2',
+        'repo_id': 'test-123'
+    }
+    response = client.post(
+        url, data=json.dumps(body), content_type='application/json'
+    )
+    assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_handles_mint_new_handle_validation_errors(client, jwt_token):
+    url = reverse('handles_mint_new_handle')
+    headers = {'Authorization': f"Bearer {jwt_token}"}
+
+    # missing required parameter 'repo'
+    body_missing = {
+        'prefix': '1903.1',
+        'url': 'http://example.com/test',
+        'repo_id': 'test-123'
+    }
+    resp = client.post(
+        url, data=json.dumps(body_missing), content_type='application/json', headers=headers
+    )
+    assert resp.status_code == 400
+    assert "'repo' parameter is required" in resp.json().get('errors', [])
+
+    # invalid prefix should produce validation error
+    body_invalid = {
+        'prefix': 'BAD_PREFIX',
+        'url': 'http://example.com/test',
+        'repo': 'fedora2',
+        'repo_id': 'test-456'
+    }
+    resp2 = client.post(
+        url, data=json.dumps(body_invalid), content_type='application/json', headers=headers
+    )
+    assert resp2.status_code == 400
+    errors = resp2.json().get('errors', [])
+    # message comes from validate_prefix which wraps the value in quotes
+    assert any("BAD_PREFIX" in e for e in errors)
 
 
