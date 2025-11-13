@@ -37,6 +37,14 @@ class Handle(TimeStampedModel):
     description = models.CharField(blank=True)
     notes = models.TextField(blank=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['prefix', 'suffix'],
+                name='unique_handle_prefix_suffix'
+            )
+        ]
+
 class JWTToken(TimeStampedModel):
     token = models.CharField()
     description = models.CharField()
