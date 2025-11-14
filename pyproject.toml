@@ -7,6 +7,7 @@ dependencies = [
     "django~=5.0",
     "django-environ~=0.12",
     "djangosaml2~=1.9",
+    "pyjwt~=2.10",
     "urlobject~=2.4",
     "waitress~=3.0",
     "whitenoise~=6.11",
@@ -19,6 +20,7 @@ prod = [
 test = [
     "pytest~=8.4",
     "pytest-django~=4.11",
+    "pytest-cov~=7.0",
     "ruff~=0.4",
 ]
 
@@ -27,6 +29,7 @@ umd-handle = "umd_handle.server:run"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "umd_handle.settings"
+python_files = ['tests.py','test_*.py','*_tests.py']
 
 [tool.ruff.format]
 # Prefer single quotes over double quotes.

@@ -8,3 +8,7 @@ class Handle(models.Model):
     repo_id = models.CharField()
     description = models.CharField(blank=True)
     notes = models.TextField(blank=True)
+
+class JWTToken(models.Model):
+    token = models.CharField()
+    description = models.CharField()

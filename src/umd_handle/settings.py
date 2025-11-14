@@ -38,6 +38,9 @@ SECRET_KEY = env('SECRET_KEY', default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', False)
 
+# JWT_SECRET: Secret key used to generate JWT tokens
+JWT_SECRET = env('JWT_SECRET', default='')
+
 SERVER_HOST = env.str('SERVER_HOST', '0.0.0.0')
 SERVER_PORT = env.str('SERVER_PORT', '3000')
 runserver.default_addr = SERVER_HOST
@@ -83,6 +86,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'djangosaml2.middleware.SamlSessionMiddleware',
     'umd_handle.middleware.LoginRequiredMiddleware',
+    'umd_handle.middleware.JWTAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'umd_handle.urls'
