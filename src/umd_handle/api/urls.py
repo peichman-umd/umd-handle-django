@@ -8,4 +8,9 @@ urlpatterns = [
         views.handles_prefix_suffix,
         name="handles_prefix_suffix"
     ),
+    path(
+        "v1/handles",
+        views.handles_mint_new_handle,
+        name="handles_mint_new_handle"
+    ),
 ]

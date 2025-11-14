@@ -1,8 +1,13 @@
+import json
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse,  Http404
+from django.http import JsonResponse, Http404
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 
-from .models import Handle
+from .models import Handle, mint_new_handle
 
+@csrf_exempt
 def handles_prefix_suffix(request, prefix, suffix):
     """
     Returns the resolved URL for the given handle, or a 404 if the no
@@ -19,3 +24,68 @@ def handles_prefix_suffix(request, prefix, suffix):
         # Return an empty JSON response, with a 404 status if the handle is
         # not found.
         return JsonResponse({}, status=404)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def handles_mint_new_handle(request):
+    """
+    POST endpoint to mint a new handle. Expects a JSON body with keys:
+    * prefix (str)
+    * url (str)
+    * repo (str)
+    * repo_id (str)
+    Optional: description, notes
+
+    On success returns JSON with the created handle info, on failure returns
+    status 400 with `{'errors': [...]}`.
+    """
+    try:
+        body = request.body.decode('utf-8')
+        data = json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        return JsonResponse({'errors': ['Invalid JSON']}, status=400)
+
+    required = ['prefix', 'url', 'repo', 'repo_id']
+    errors = []
+    for key in required:
+        if key not in data or data.get(key) in (None, ''):
+            errors.append(f"'{key}' parameter is required")
+    if errors:
+        return JsonResponse({'errors': errors}, status=400)
+
+    try:
+        handle = mint_new_handle(
+            prefix=data['prefix'],
+            url=data['url'],
+            repo=data['repo'],
+            repo_id=data['repo_id'],
+            description=data.get('description', ''),
+            notes=data.get('notes', ''),
+        )
+    except ValidationError as e:
+        messages = []
+        if hasattr(e, 'message_dict'):
+            for v in e.message_dict.values():
+                if isinstance(v, (list, tuple)):
+                    messages.extend([str(x) for x in v])
+                else:
+                    messages.append(str(v))
+        else:
+            messages = list(e.messages)
+        return JsonResponse({'errors': messages}, status=400)
+    except Exception as e:
+        return JsonResponse({'errors': [str(e)]}, status=400)
+
+    return JsonResponse(
+        {
+            'suffix': str(handle.suffix),
+            'handle_url': handle.handle_url(),
+            'request': {
+                'prefix':data['prefix'],
+                'repo':data['repo'],
+                'repo_id':data['repo_id'],
+                'url':data['url']
+            }
+        }
+    )

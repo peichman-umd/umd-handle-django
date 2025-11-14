@@ -64,6 +64,10 @@ except OSError:
 K8S_INTERNAL_HOST = URLObject(env.str('K8S_INTERNAL_HOST', 'umd-handle-app'))
 ALLOWED_HOSTS.append(K8S_INTERNAL_HOST)
 
+# The base URL (including a trailing slash) for the handle proxy server
+# associated with this application. For example: "https://hdl-test.lib.umd.edu/"
+HANDLE_HTTP_PROXY_BASE=URLObject(env.str('HANDLE_HTTP_PROXY_BASE', '<SET HANDLE_HTTP_PROXY_BASE>'))
+
 # Application definition
 
 INSTALLED_APPS = [
