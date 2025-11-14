@@ -4,13 +4,14 @@
 DEBUG=True
 
 # Server settings
-# DOMAIN_NAME - the domain name used by the server
 # SERVER_HOST - The IP address/host URL where the server is run.
 # SERVER_PORT - the port the application will run on in Docker. Ignored in
 #               local development
-DOMAIN_NAME=handle-local
+# K8S_INTERNAL_HOST - the internal Kubernetes host name for the pod
+# to allow cross-stack HTTP communication (not used in local development).
 BASE_URL=http://handle-local:3000/
 SERVER_PORT=3000
+K8S_INTERNAL_HOST=umd-handle-app
 
 # SECRET_KEY - Secret key used for provide cryptographic signing.
 #              Does not need to be set in local development, which will get

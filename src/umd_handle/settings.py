@@ -46,8 +46,6 @@ SERVER_PORT = env.str('SERVER_PORT', '3000')
 runserver.default_addr = SERVER_HOST
 runserver.default_port = SERVER_PORT
 
-DOMAIN_NAME = env.str('DOMAIN_NAME', 'handle-local')
-
 BASE_URL = URLObject(env.str('BASE_URL', f"http://handle-local:{SERVER_PORT}/"))
 CSRF_TRUSTED_ORIGINS = [str(BASE_URL.with_path(''))]
 
@@ -61,6 +59,10 @@ except OSError:
     # ignore if we can't get the IP address
     pass
 
+# Kubernetes internal host, used for inter-pod communication from the
+# Handle.net server instance, and other Kubernetes pods
+K8S_INTERNAL_HOST = URLObject(env.str('K8S_INTERNAL_HOST', 'umd-handle-app'))
+ALLOWED_HOSTS.append(K8S_INTERNAL_HOST)
 
 # Application definition
 
