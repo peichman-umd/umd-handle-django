@@ -15,4 +15,8 @@ class HandleAdmin(admin.ModelAdmin):
     # Default order for admin list - modified descending
     ordering = ['-modified']
 
+    search_fields = [
+        'prefix', 'suffix', 'url', 'repo', 'repo_id', 'description', 'notes'
+    ]
+
 admin.site.register(Handle, HandleAdmin)
