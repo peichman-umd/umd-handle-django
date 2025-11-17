@@ -83,6 +83,8 @@ class Handle(TimeStampedModel):
     def handle_url(self):
         return f"{settings.HANDLE_HTTP_PROXY_BASE}{self.prefix}/{self.suffix}"
 
+    def __str__(self):
+        return f"{self.prefix}/{self.suffix}"
 
 
 class JWTToken(TimeStampedModel):
