@@ -28,7 +28,68 @@ def handle1():
     """
     Creates a handle - 1903.1/1
     """
-    return Handle.objects.create(prefix='1903.1', suffix = 1, url='http://example.com/')
+    return Handle.objects.create(
+        prefix='1903.1', suffix = 1, url='http://example.com/',
+        repo='fcrepo', repo_id='https://fcrepo-test.lib.umd.edu/fcrepo/test'
+    )
+
+@pytest.mark.django_db
+def test_handles_exists_requires_jwt_token(client):
+    repo = 'fcrepo'
+    repo_id = 'https://fcrepo-test.lib.umd.edu/fcrepo/test'
+    response = client.get(reverse("handles_exists"), data={'repo': repo, 'repo_id': repo_id})
+    assert response.status_code == 401
+
+@pytest.mark.django_db
+def test_handles_exists_requires_repo_and_repo_id(client, jwt_token):
+    headers = { 'Authorization': f"Bearer {jwt_token}" }
+
+    # "repo" is empty
+    response = client.get(reverse("handles_exists"),
+                          data={'repo': '', 'repo_id': 'test-repo-id'},
+                          headers=headers
+                         )
+    assert response.status_code == 400
+
+    # "repo_id" missing
+    response = client.get(reverse("handles_exists"),
+                          data={'repo': 'test-repo'},
+                          headers=headers
+                         )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_handles_exists_return_false_if_handle_does_not_exists(client, jwt_token):
+    repo = 'fcrepo'
+    repo_id = 'repo-id-does-not-exist'
+    headers = { 'Authorization': f"Bearer {jwt_token}" }
+
+    response = client.get(reverse("handles_exists"),
+                          data={'repo': repo, 'repo_id': repo_id},
+                          headers=headers
+                         )
+
+    assert response.status_code == 200
+    expected_response = '{"exists": false, "request": {"repo": "fcrepo", "repo_id": "repo-id-does-not-exist"}}'
+    assert response.content.decode('utf-8') == expected_response
+
+
+@pytest.mark.django_db
+def test_handles_exists_return_true_if_handle_exists(client, jwt_token, handle1):
+    repo = handle1.repo
+    repo_id = handle1.repo_id
+    headers = { 'Authorization': f"Bearer {jwt_token}" }
+
+    response = client.get(reverse("handles_exists"),
+                          data={'repo': repo, 'repo_id': repo_id},
+                          headers=headers
+                         )
+
+    assert response.status_code == 200
+    expected_response = '{"exists": true, "handle_url": "http://hdl-local.lib.umd.edu/1903.1/1", "prefix": "1903.1", "suffix": "1", "url": "http://example.com/", "request": {"repo": "fcrepo", "repo_id": "https://fcrepo-test.lib.umd.edu/fcrepo/test"}}'
+    assert response.content.decode('utf-8') == expected_response
+
 
 @pytest.mark.django_db
 def test_handles_prefix_suffix_get_requires_jwt_token(client):

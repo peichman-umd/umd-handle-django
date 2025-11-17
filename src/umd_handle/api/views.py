@@ -8,6 +8,48 @@ from django.core.exceptions import ValidationError
 from .models import Handle, mint_new_handle
 
 @csrf_exempt
+def handles_exists(request):
+    """
+    Returns whether or not a handle exists with a specified repository and
+    repository id
+    """
+    if request.method == 'GET':
+        # Retrieve the "repo" and "repo_id" parameters
+        repo = request.GET.get('repo', '')
+        repo_id = request.GET.get('repo_id', '')
+
+        if not repo or not repo_id:
+            return JsonResponse({'errors': ["'repo' and 'repo_id' parameters are required"]}, status=400)
+
+        try:
+            handle = Handle.objects.get(repo=repo, repo_id=repo_id)
+            exists = True
+        except Handle.DoesNotExist:
+            exists = False
+
+
+        request_dict = {
+            'repo': repo,
+            'repo_id': repo_id
+        }
+        if exists:
+            json_response = {
+                'exists': True,
+                'handle_url': handle.handle_url(),
+                'prefix': handle.prefix,
+                'suffix': str(handle.suffix),
+                'url': handle.url,
+                'request': request_dict
+            }
+        else:
+            json_response = {
+                'exists': False,
+                'request': request_dict
+            }
+
+        return JsonResponse(json_response)
+
+@csrf_exempt
 def handles_prefix_suffix(request, prefix, suffix):
     """
     Returns the resolved URL for the given handle, or a 404 if the no
