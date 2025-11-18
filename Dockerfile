@@ -28,4 +28,4 @@ RUN src/manage.py collectstatic
 EXPOSE 3000
 
 # Commands to run migration and start the server
-CMD sh -c "src/manage.py migrate && umd-handle"
+CMD ["sh", "-c", "src/manage.py migrate && umd-handle"]
