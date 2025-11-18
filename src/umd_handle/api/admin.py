@@ -3,10 +3,16 @@ from django.contrib.auth.models import Group, User
 
 from .models import Handle
 
+# Customize the site header, title, and admin index page title
+admin.site.site_header = "UMD Handle Service"
+admin.site.site_title = "UMD Handle Service"
+admin.site.index_title = "UMD Handle Service Admin Portal"
+
 # Unregister User and Group, because authentication/authorization is controlled
 # the Grouper, so there is no need to show these entries in the admin interface
 admin.site.unregister(User)
 admin.site.unregister(Group)
+
 
 class HandleAdmin(admin.ModelAdmin):
     fields = [
