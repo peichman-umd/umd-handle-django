@@ -19,4 +19,6 @@ class HandleAdmin(admin.ModelAdmin):
         'prefix', 'suffix', 'url', 'repo', 'repo_id', 'description', 'notes'
     ]
 
+    list_filter = ('repo', 'created', 'modified')
+
 admin.site.register(Handle, HandleAdmin)
