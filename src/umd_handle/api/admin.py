@@ -7,7 +7,7 @@ class HandleAdmin(admin.ModelAdmin):
         'prefix', 'suffix', 'url', 'repo', 'repo_id', 'description', 'notes',
         'created', 'modified',
     ]
-    readonly_fields = ['created', 'modified']
+    readonly_fields = ('suffix', 'created', 'modified')
 
     list_display = (
         'prefix', 'suffix', 'url', 'repo', 'repo_id', 'modified'
@@ -20,5 +20,13 @@ class HandleAdmin(admin.ModelAdmin):
     ]
 
     list_filter = ('repo', 'created', 'modified')
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            # Editing an existing handle
+            return ('prefix',) + self.readonly_fields
+        else:
+            # Creating a new handle
+            return self.readonly_fields
 
 admin.site.register(Handle, HandleAdmin)

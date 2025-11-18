@@ -23,15 +23,12 @@ def mint_new_handle(prefix, url, repo, repo_id, description='', notes=''):
 
     Returns the new Handle instance.
     """
-    # Use atomic transaction to ensure consistency even if there are
-    # multiple simultaneous requests.
+    # Use atomic transaction to avoid race condition in generating the
+    # next suffix
     with transaction.atomic():
-        max_suffix = Handle.objects.filter(prefix=prefix) \
-            .aggregate(max_suffix=Max('suffix'))['max_suffix']
-        next_suffix = (max_suffix or 0) + 1
         handle = Handle(
             prefix=prefix,
-            suffix=next_suffix,
+            suffix=next_suffix(prefix),
             url=url,
             repo=repo,
             repo_id=repo_id,
@@ -43,6 +40,17 @@ def mint_new_handle(prefix, url, repo, repo_id, description='', notes=''):
         handle.full_clean()
         handle.save()
         return handle
+
+
+def next_suffix(prefix):
+    """
+    Calculate the next suffix for the given prefix
+    """
+    max_suffix = Handle.objects.filter(prefix=prefix) \
+        .aggregate(max_suffix=Max('suffix'))['max_suffix']
+    next_suffix = (max_suffix or 0) + 1
+
+    return next_suffix
 
 class Handle(TimeStampedModel):
 
@@ -82,6 +90,17 @@ class Handle(TimeStampedModel):
       # Returns the fully-qualified URL to use as the handle URL
     def handle_url(self):
         return f"{settings.HANDLE_HTTP_PROXY_BASE}{self.prefix}/{self.suffix}"
+
+    def save(self, *args, **kwargs):
+        # Use atomic transaction to avoid race condition in generating the
+        # next suffix
+        with transaction.atomic():
+            # When suffix is not set, this must be a new handle, so create and
+            # assign the next suffix for the prefix.
+            if not self.suffix:
+                self.suffix = next_suffix(self.prefix)
+
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.prefix}/{self.suffix}"
