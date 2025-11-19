@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
+from django.db.models import Value
+from django.db.models.functions import Concat
 from django.utils.html import format_html
 
 from .models import Handle
@@ -23,7 +25,7 @@ class HandleAdmin(admin.ModelAdmin):
     readonly_fields = ('suffix', 'created', 'modified')
 
     list_display = (
-        '__str__', 'url_link', 'repo', 'repo_id', 'modified'
+        'combined_handle', 'url_link', 'repo', 'repo_id', 'modified'
     )
     # Default order for admin list - modified descending
     ordering = ['-modified']
@@ -34,9 +36,13 @@ class HandleAdmin(admin.ModelAdmin):
 
     list_filter = ('repo', 'created', 'modified')
 
-    @admin.display(description='URL')
+    @admin.display(description='URL', ordering='url')
     def url_link(self, obj):
         return format_html('<a href="{url}">{url}</a>', url=obj.url)
+
+    @admin.display(description='Handle', ordering=Concat('prefix', Value(' '), 'suffix'))
+    def combined_handle(self, obj):
+        return str(obj)
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
