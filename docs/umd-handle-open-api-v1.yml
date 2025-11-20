@@ -291,18 +291,6 @@ paths:
                     description: The URL for the handle, if one exists
                     example: 'https://hdl.handle.net/1903.1/1'
                     type: string
-                  prefix:
-                    description: The handle prefix, if one exists
-                    type: string
-                    example: '1903.1'
-                  suffix:
-                    description: The handle suffix, if one exists
-                    type: string
-                    example: '1'
-                  url:
-                    description: The URL of the resource, if one exists
-                    type: string
-                    example: 'http://example.com/resource/abc/123'
                   repo:
                     description: The source repository for the resource, if one exists
                     type: string
@@ -311,6 +299,10 @@ paths:
                     description: The internal id of the resource in the source repository, if one exists
                     type: string
                     example: 'abc:123'
+                  url:
+                    description: The URL of the resource, if one exists
+                    type: string
+                    example: 'http://example.com/resource/abc/123'
         '400':
           description: 'Unsuccessful request due to invalid parameters, such as missing parameters, or unknown repository.'
           content:

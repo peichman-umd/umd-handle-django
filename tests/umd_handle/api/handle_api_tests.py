@@ -145,7 +145,7 @@ def test_handles_info_returns_true_if_handle_exists(client, jwt_token, handle1):
                          )
 
     assert response.status_code == 200
-    expected_response = '{"exists": true, "handle_url": "http://hdl-local.lib.umd.edu/1903.1/1", "prefix": "1903.1", "suffix": "1", "url": "http://example.com/", "request": {"prefix": "1903.1", "suffix": "1"}}'
+    expected_response = '{"exists": true, "handle_url": "http://hdl-local.lib.umd.edu/1903.1/1", "repo": "fcrepo", "repo_id": "https://fcrepo-test.lib.umd.edu/fcrepo/test", "url": "http://example.com/", "request": {"prefix": "1903.1", "suffix": "1"}}'
     assert response.content.decode('utf-8') == expected_response
 
 
