@@ -79,8 +79,8 @@ def handles_info(request):
             json_response = {
                 'exists': True,
                 'handle_url': handle.handle_url(),
-                'prefix': handle.prefix,
-                'suffix': str(handle.suffix),
+                'repo': handle.repo,
+                'repo_id': handle.repo_id,
                 'url': handle.url,
                 'request': request_dict
             }
